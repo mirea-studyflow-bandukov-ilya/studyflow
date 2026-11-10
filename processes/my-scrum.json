@@ -1,0 +1,32 @@
+{
+  "name": "Мой Scrum",
+  "extends": "scrum.json",
+  "project": "mirea-studyflow-bandukov-ilya/studyflow",
+  "states": ["New", "Approved", "Committed", "Утверждено QA", "Done"],
+  "fields": [
+    {
+      "name": "PUL Ticket ID",
+      "label": "Ticket ID",
+      "group": "PartsUnlimitedGroup",
+      "type": "text",
+      "issueType": "PBI",
+      "githubIssueFieldId": 49726064,
+      "visibility": "Organization only"
+    }
+  ],
+  "kanban": {
+    "qaStatus": "Утверждено QA",
+    "wipLimit": 1,
+    "splitField": "QA phase",
+    "splitValues": ["Doing", "Done"],
+    "serviceClassField": "Service class",
+    "serviceClasses": ["Обычная", "Ускоренная"],
+    "definitionOfDone": "Проходит **все** тесты; критерии приёмки проверены; блокирующих дефектов нет."
+  },
+  "githubMapping": {
+    "nativeInheritedProcess": false,
+    "fieldAndTypeScope": "organization",
+    "layoutAliasAndGroupScope": "documentation dashboard",
+    "configurationAppliedThrough": "GitHub organization settings and Projects UI"
+  }
+}
