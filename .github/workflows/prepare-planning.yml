@@ -1,0 +1,78 @@
+name: Prepare planning (practice 2.1)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: practice-2-1-prepare
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Create planning items and native hierarchy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: python
+        run: |
+          import json, os, re, time, urllib.request
+          repo = os.environ['GITHUB_REPOSITORY']
+          base = 'https://api.github.com/repos/' + repo + '/'
+          def api(path, data=None, method=None):
+              if data is not None: time.sleep(1.1)
+              req = urllib.request.Request(base + path, data=json.dumps(data).encode() if data is not None else None,
+                  method=method, headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                  'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28',
+                  'User-Agent': 'StudyFlow-practice21', 'Content-Type': 'application/json'})
+              with urllib.request.urlopen(req, timeout=60) as response: return json.load(response)
+          labels = {x['name'] for x in api('labels?per_page=100')}
+          for name, color in [('practice:2.1','0969da'), ('area:PUL-Web','5319e7'),
+                              ('area:PUL-Web/Data','5319e7'), ('activity:Development','0e8a16'), ('activity:Design','fbca04')]:
+              if name not in labels: api('labels', {'name':name, 'color':color})
+          milestone = next(x['number'] for x in api('milestones?state=all&per_page=100') if x['title']=='Sprint 2')
+          specs = [
+              ('epic','Обучение продуктам','Epic',None,'Bankin1','PUL-Web',None,None,
+               'Цель: спланировать раздел учебных материалов. Дочерняя функция разбивает цель на пользовательские истории.'),
+              ('feature','Осваиваем дашборды','Feature','epic','Bankin1','PUL-Web',None,None,
+               'Функция объединяет новые материалы, историю просмотра и запросы материалов.'),
+              ('pbi-new','Как клиент, я хочу просмотреть новые учебники','PBI','feature','Bankin1','PUL-Web',None,None,
+               'Критерии приёмки: новые учебники отсортированы от новых к старым; пустой список имеет понятное сообщение. Учебное состояние: Approved.'),
+              ('pbi-recent','Как клиент, я хочу видеть недавно просмотренные учебники','PBI','feature',None,'PUL-Web',None,None,
+               'Критерии приёмки: видны последние просмотренные учебники; повторный просмотр обновляет порядок. Учебное состояние: Committed.'),
+              ('pbi-request','Как клиент, я хочу запрашивать новые материалы','PBI','feature',None,'PUL-Web',None,None,
+               'Критерии приёмки: можно указать тему и описание запроса; показано подтверждение. Для упражнения карточка будет переведена в Done.'),
+              ('task-page','Добавить страницу для самых последних учебников','Task','pbi-new',None,'PUL-Web','Development',5,
+               'Исходная оценка Remaining Work: 5 ч. На этапе планирования назначить Bankin1 и пересмотреть оценку до 8 ч. Итерацию Sprint 2 не менять.'),
+              ('task-query','Оптимизация запроса к данным для последних учебников','Task','pbi-new',None,'PUL-Web/Data','Design',3,
+               'Remaining Work: 3 ч. Задача остаётся без исполнителя для демонстрации нераспределённой нагрузки. Вложенная область включается в PUL-Web по префиксу.')
+          ]
+          existing = api('issues?state=all&labels=practice%3A2.1&per_page=100')
+          found = {}
+          for x in existing:
+              match = re.search(r'<!-- practice21:([a-z-]+) -->', x.get('body') or '')
+              if match:
+                  assert match[1] not in found, 'Duplicate practice marker'
+                  found[match[1]] = x
+          for key, title, kind, parent, assignee, area, activity, hours, note in specs:
+              if key in found: continue
+              body = (f'<!-- practice21:{key} -->\n\n> Учебное планирование по методичке 2.1; статусы демонстрируют процесс, а не готовую реализацию StudyFlow.\n\n'
+                  f'| Поле | Значение |\n|---|---|\n| Команда | PUL-Web |\n| Область | {area} |\n| Итерация | Sprint 2 |\n| Activity | {activity or "—"} |\n| Исходная оценка, ч | {hours if hours is not None else "—"} |\n\n{note}\n')
+              item_labels = ['practice:2.1','area:' + area]
+              if activity: item_labels.append('activity:' + activity)
+              payload = {'title':title,'body':body,'type':kind,'milestone':milestone,'labels':item_labels}
+              if assignee: payload['assignees'] = [assignee]
+              found[key] = api('issues', payload)
+              print(f'{key}: #{found[key]["number"]}')
+          for key, title, kind, parent, *_ in specs:
+              if not parent: continue
+              parent_number = found[parent]['number']
+              children = api(f'issues/{parent_number}/sub_issues?per_page=100')
+              if found[key]['id'] not in {x['id'] for x in children}:
+                  api(f'issues/{parent_number}/sub_issues', {'sub_issue_id':found[key]['id']})
+          assert len(found) == 7
+          summary = '# Практика 2.1 — исходные карточки\n\n'
+          for key, title, *_ in specs: summary += f'- [{title}]({found[key]["html_url"]})\n'
+          summary += '\nСозданы или найдены 7 карточек и 6 связей. Начальные оценки задач: 5 + 3 = 8 ч. Доска, назначения и ёмкость настраиваются отдельно.\n'
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f: f.write(summary)
