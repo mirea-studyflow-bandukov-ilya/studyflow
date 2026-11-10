@@ -1,0 +1,7 @@
+{
+  "name": "Scrum",
+  "itemTypes": ["Epic", "Feature", "PBI", "Task", "Bug"],
+  "states": ["New", "Approved", "Committed", "Done"],
+  "fields": [],
+  "workingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+}
