@@ -36,3 +36,11 @@
 ## Что показать на сдаче
 
 Успешную сборку и публикацию утилиты в Actions, тестовые Issues разных типов, Milestones Sprint 1–6 и parent/sub-issue связь. Объяснить: генератор экономит ручное заполнение окружения; шаблон задаёт начальные данные; повторяемость позволяет воспроизвести подготовку без дубликатов.
+
+## Проверенный результат
+
+- [Первый успешный запуск](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/actions/runs/42893289442): сборка .NET 8, публикация утилиты с шаблоном, создание 171 карточки и 19 связей.
+- [Спринты Sprint 1–6](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/milestones).
+- [Epic Shopping Cart Facility и 4 дочерних Feature](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/issues/144).
+- Отдельная проверка через публичный REST API подтвердила все исходные ID, названия, типы, состояния и назначения спринтов: 147 открытых и 24 закрытых демонстрационных карточки.
+- [Повторный успешный запуск](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/actions/runs/42894381654): проверены те же 171 карточка и 19 связей, новых карточек создано **0**.
