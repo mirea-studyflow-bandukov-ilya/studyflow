@@ -42,5 +42,6 @@
 - [1.1. Организация и проект](docs/practice-01.md).
 - [1.2. Wiki и документация как код](docs/practice-02.md).
 - [2.0. Подготовка тестовых данных](docs/practice-20.md).
+- [2.1. Планирование, спринты и ёмкость](docs/practice-21.md).
 - [Опубликованная документация StudyFlow](https://mirea-studyflow-bandukov-ilya.github.io/Docs/).
 - [Исходники документации в Docs](https://github.com/mirea-studyflow-bandukov-ilya/Docs).
