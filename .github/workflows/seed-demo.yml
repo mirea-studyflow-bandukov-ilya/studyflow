@@ -1,0 +1,49 @@
+name: Prepare demo data (practice 2.0)
+run-name: Parts Unlimited — ${{ inputs.mode }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Preview template or import missing demo data
+        type: choice
+        options:
+          - dry-run
+          - apply
+        default: dry-run
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: parts-unlimited-seed
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Build and publish generator with template
+        run: dotnet publish tools/DemoGenerator/DemoGenerator.csproj -c Release -r linux-x64 --self-contained true -o artifacts/demo-generator
+      - name: Validate the template
+        run: ./artifacts/demo-generator/DemoGenerator --dry-run
+      - name: Import and verify demo data
+        if: inputs.mode == 'apply'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./artifacts/demo-generator/DemoGenerator --apply
+      - name: Save executable, template and import mapping
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-generator
+          path: |
+            artifacts/demo-generator/
+            seed-result.json
+          retention-days: 14
