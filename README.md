@@ -36,3 +36,10 @@
 Описание проекта опубликовано в [Wiki](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/wiki). Выполнение первой практики фиксируется в [отчёте](docs/practice-01.md).
 
 Организация команды: [mirea-studyflow-bandukov-ilya](https://github.com/mirea-studyflow-bandukov-ilya).
+
+## Практические работы
+
+- [1.1. Организация и проект](docs/practice-01.md).
+- [1.2. Wiki и документация как код](docs/practice-02.md).
+- [Опубликованная документация StudyFlow](https://mirea-studyflow-bandukov-ilya.github.io/Docs/).
+- [Исходники документации в Docs](https://github.com/mirea-studyflow-bandukov-ilya/Docs).
