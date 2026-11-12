@@ -1,0 +1,43 @@
+@page
+@{
+    var pageTitle = "Учебные задачи";
+}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@pageTitle · StudyFlow</title>
+    <style>
+        body {
+            margin: 0;
+            font: 1rem/1.6 system-ui, sans-serif;
+            color: #18304d;
+            background: #f1f6f7;
+        }
+        header {
+            padding: 1rem max(1.5rem, calc((100vw - 46rem) / 2));
+            background: #18304d;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        main {
+            max-width: 46rem;
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+        }
+        h1 { margin: 0; font-size: clamp(2.25rem, 6vw, 3.75rem); line-height: 1.1; }
+        p { max-width: 38rem; margin: 1.25rem 0; }
+        a { color: #08766f; text-underline-offset: .2em; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <header>StudyFlow</header>
+    <main>
+        <h1>@pageTitle</h1>
+        <p>Планируй учебные задачи, расставляй приоритеты и следи за сроками.</p>
+        <a href="https://mirea-studyflow-bandukov-ilya.github.io/Docs/">Документация StudyFlow</a>
+    </main>
+</body>
+</html>
