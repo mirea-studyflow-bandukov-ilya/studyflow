@@ -1,0 +1,17 @@
+# Практика 4.0 — локальный агент GitHub Actions
+
+По методичке нужно подготовить окружение и права, установить и зарегистрировать агент, запустить его и настроить пользовательскую возможность. Проверочный запуск подтверждает, что конвейер нашёл агент с подходящей конфигурацией.
+
+| Шаг методички | Выполнение в GitHub |
+| --- | --- |
+| Проверить ОС, архитектуру и средства сборки | Linux ARM64 в отдельной виртуальной машине Colima на Mac с Apple Silicon. GitHub Runner 2.338.2, .NET SDK 8.0.428 |
+| Выбрать права регистрации и запуска | Регистрация из настроек закрытого репозитория владельцем. Процесс в контейнере выполняет непривилегированный пользователь `runner` с UID 10001 |
+| Скачать, проверить и зарегистрировать агент | Два официальных архива проверены по SHA-256 и SHA-512. `config.sh` регистрирует агент `studyflow-linux-arm64` по часовому токену |
+| Запустить агент на одно задание | Контейнер подключается через `run.sh` и завершается после задания. GitHub снимает регистрацию благодаря `--ephemeral` |
+| Задать возможность и требование | Пользовательская метка `studyflow-dotnet8`. Задание требует `runs-on: [self-hosted, linux, ARM64, studyflow-dotnet8]`. Первый шаг отдельно проверяет SDK |
+
+Для агента создан закрытый репозиторий в организации StudyFlow. Контейнер запускается без подключённых каталогов Mac и сокета Docker. Задание запускается вручную из `main`, получает исходники по фиксированному коммиту `7e6382b645cae93eee0ac2690559b5c3b3b1458d` и имеет право чтения содержимого репозитория. [Репозиторий агента и инструкция](https://github.com/mirea-studyflow-bandukov-ilya/studyflow-runner-lab) · [Правила выбора агента](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/use-in-a-workflow)
+
+Контрольная сборка №1 завершилась успешно за 27 секунд. В журнале указаны имя агента, архитектура и версия SDK. Скомпилированный DemoGenerator проверил шаблон с 171 элементом, 19 связями и 6 спринтами. Архив `practice-4-0-demo-generator-linux-arm64` содержит сборку, `build-info.txt` и `template-check.txt`. Срок хранения артефакта 14 дней. [Сводка запуска и артефакт](https://github.com/mirea-studyflow-bandukov-ilya/studyflow-runner-lab/actions/runs/43274459601) · [Журнал задания](https://github.com/mirea-studyflow-bandukov-ilya/studyflow-runner-lab/actions/runs/43274459601/job/131379051010)
+
+Для защиты открыть сводку и шаги **Verify runner and installed SDK**, **Validate the published template** и **Upload build artifact**. Экран **Settings → Actions → Runners** показывает агент в состоянии Idle до старта. Для повторного запуска зарегистрировать новый одноразовый агент по инструкции репозитория. [Настройки агентов](https://github.com/mirea-studyflow-bandukov-ilya/studyflow-runner-lab/settings/actions/runners)
