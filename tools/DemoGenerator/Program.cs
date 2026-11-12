@@ -9,22 +9,26 @@ const string seedLabel = "demo:parts-unlimited";
 var templatePath = Path.Combine(AppContext.BaseDirectory, "template.json");
 var template = JsonNode.Parse(await File.ReadAllTextAsync(templatePath))!.AsObject();
 var items = template["items"]!.AsArray().Select(x => x!.AsObject()).ToList();
+var translationPath = Path.Combine(AppContext.BaseDirectory, "localization-ru.json");
+var translations = JsonNode.Parse(await File.ReadAllTextAsync(translationPath))!.AsObject();
 var links = template["links"]!.AsArray().Select(x => x!.AsObject()).ToList();
 var iterations = template["iterations"]!.AsArray().Select(x => x!.GetValue<string>()).ToList();
 var ids = items.Select(x => x["sourceId"]!.GetValue<int>()).ToHashSet();
 if (ids.Count != items.Count || links.Any(x => !ids.Contains(x["parent"]!.GetValue<int>()) || !ids.Contains(x["child"]!.GetValue<int>())))
-    throw new InvalidDataException("Duplicate IDs or dangling hierarchy links in template.");
+    throw new InvalidDataException("Шаблон содержит повторяющиеся номера или ссылки на отсутствующие элементы.");
+if (translations.Count != items.Count || ids.Any(id => translations[id.ToString()] is null))
+    throw new InvalidDataException("Отсутствует перевод элементов шаблона.");
 if (items.Any(x => x["iteration"] is not null && !iterations.Contains(x["iteration"]!.GetValue<string>())))
-    throw new InvalidDataException("Unknown iteration in template.");
-Console.WriteLine($"Parts Unlimited: {items.Count} items, {links.Count} hierarchy links, {iterations.Count} sprints.");
+    throw new InvalidDataException("В шаблоне указана неизвестная итерация.");
+Console.WriteLine($"Parts Unlimited: карточек — {items.Count}, связей иерархии — {links.Count}, спринтов — {iterations.Count}.");
 foreach (var group in items.GroupBy(x => x["type"]!.GetValue<string>()))
     Console.WriteLine($"  {group.Key}: {group.Count()}");
 if (args.Length == 0 || args.SequenceEqual(new[] { "--dry-run" }))
 {
-    Console.WriteLine("Template validated. No remote changes. Use --apply to import.");
+    Console.WriteLine("Шаблон и перевод проверены. Для импорта запустите с параметром --apply.");
     return;
 }
-if (!args.SequenceEqual(new[] { "--apply" })) throw new ArgumentException("Use --dry-run or --apply.");
+if (!args.SequenceEqual(new[] { "--apply" })) throw new ArgumentException("Укажите --dry-run для проверки или --apply для импорта.");
 var repository = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY") ?? "";
 if (!Regex.IsMatch(repository, @"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"))
     throw new InvalidOperationException("GITHUB_REPOSITORY must be owner/repo.");
@@ -113,20 +117,15 @@ foreach (var item in items)
     if (imported.ContainsKey(id)) continue; // Preserve edits made in later practices.
     var state = item["state"]!.GetValue<string>();
     var iteration = item["iteration"]?.GetValue<string>();
-    var description = item["description"]!.GetValue<string>();
-    var body = $"{Marker(id)}\n\n> Тестовая карточка Parts Unlimited, импортированная для практики 2.0. Статус из шаблона не означает реализацию функции StudyFlow.\n\n" +
-        $"| Поле | Значение |\n|---|---|\n| Source ID | {id} |\n| Type | {item["type"]} |\n| Original state | {state} |\n| Iteration | {iteration ?? "Backlog"} |\n| Effort | {item["effort"]} |\n| Remaining Work (hours) | {item["remainingWork"]} |\n| Priority | {item["priority"]} |\n\n{description}\n";
-    var steps = item["testSteps"]!.GetValue<string>();
-    if (steps.Length > 0) body += "\n<details><summary>Original test steps (Azure XML)</summary>\n\n```xml\n" + steps + "\n```\n</details>\n";
-    body += $"\nИсточник: [Microsoft / AzDevOpsDemoGenerator]({template["sourceRepository"]}/tree/{template["sourceCommit"]}/{template["sourcePath"]}), MIT.\n";
-    var payload = new JsonObject { ["title"] = item["title"]!.GetValue<string>(), ["body"] = body,
+    var translation = translations[id.ToString()]!.AsObject();
+    var payload = new JsonObject { ["title"] = translation["title"]!.GetValue<string>(), ["body"] = translation["body"]!.GetValue<string>(),
         ["labels"] = new JsonArray(seedLabel, TypeLabel(item), StateLabel(item)) };
     if (iteration is not null) payload["milestone"] = milestones[iteration];
     var issue = (await Call(HttpMethod.Post, "issues", payload)).AsObject();
     imported.Add(id, issue);
     createdIds.Add(id);
     created++;
-    Console.WriteLine($"Created #{issue["number"]}: {item["title"]}");
+    Console.WriteLine($"Создана карточка #{issue["number"]}: {translation["title"]}");
 }
 
 var linked = 0;
