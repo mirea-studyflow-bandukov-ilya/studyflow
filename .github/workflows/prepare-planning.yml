@@ -1,4 +1,4 @@
-name: Prepare planning (practice 2.1)
+name: Подготовка планирования · практика 2.1
 on:
   workflow_dispatch:
 permissions:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - name: Create planning items and native hierarchy
+      - name: Создать карточки и связать их в иерархию
         env:
           GH_TOKEN: ${{ github.token }}
         shell: python
