@@ -8,5 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Update="template.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="localization-ru.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
