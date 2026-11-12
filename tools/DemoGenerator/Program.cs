@@ -79,7 +79,6 @@ async Task<List<JsonObject>> List(string path)
 }
 string TypeLabel(JsonObject item) => "type:" + item["type"]!.GetValue<string>().ToLowerInvariant().Replace(' ', '-');
 string StateLabel(JsonObject item) => "state:" + item["state"]!.GetValue<string>().ToLowerInvariant().Replace(' ', '-');
-string Marker(int id) => $"<!-- parts-unlimited:{id} -->";
 
 var desiredLabels = items.Select(TypeLabel).Concat(items.Select(StateLabel)).Append(seedLabel).Distinct().ToList();
 var existingLabels = (await List("labels")).Select(x => x["name"]!.GetValue<string>()).ToHashSet(StringComparer.OrdinalIgnoreCase);
