@@ -1,0 +1,28 @@
+name: Перевод учебных карточек Parts Unlimited
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: parts-unlimited-seed
+  cancel-in-progress: false
+
+jobs:
+  localize:
+    name: Обновить названия и описания
+    if: github.repository == 'mirea-studyflow-bandukov-ilya/studyflow' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Получить перевод и шаблон
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Применить перевод к существующим карточкам
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/localize_demo_issues.py
