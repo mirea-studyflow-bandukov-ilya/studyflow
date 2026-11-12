@@ -10,17 +10,17 @@
 | Переменные | `BUILD_CONFIGURATION=Release`, `WEB_PROJECT`, `TEST_PROJECT` |
 | Триггеры | Ручной запуск, `push` в `main` и pull request в `main` при изменении приложения или тестов |
 | Шаги | Получение исходников, .NET SDK 8, `restore`, `build`, `test`, `publish`, выгрузка файлов |
-| Результаты | `studyflow-web` со сборкой, `studyflow-test-results` с отчётом TRX и таблица тестов в Summary |
+| Результаты | `studyflow-web` со сборкой, `studyflow-test-results` с отчётом TRX и таблица тестов в сводке запуска |
 | Хранение | Для этих артефактов 14 дней. В настройках репозитория указан срок хранения истории и логов 90 дней |
 
 ## Два проверенных запуска
 
 | Запуск | Событие | Коммит | Итог |
 | --- | --- | --- | --- |
-| [№1](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/actions/runs/43275095603) | `workflow_dispatch` | `656c750` | Success, 3 теста, 2 артефакта |
-| [№2](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/actions/runs/43275348853) | `push` | `0a6af56` | Success, 3 теста, 2 артефакта |
+| [№1](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/actions/runs/43275095603) | `workflow_dispatch` | `656c750` | Успешно, 3 теста, 2 артефакта |
+| [№2](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/actions/runs/43275348853) | `push` | `0a6af56` | Успешно, 3 теста, 2 артефакта |
 
-Коммит №2 меняет заголовок с «Учебные задачи» на «План учебных задач» в `Index.cshtml`. На вкладке Actions он появился автоматически, а Summary показывает `Trigger: push` и соответствующий SHA. [Правка заголовка](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/commit/0a6af56cfd816d1f0ab7b6da67d2f3398e0dd64d) · [История запусков](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/actions/workflows/studyflow-ci.yml)
+Коммит №2 меняет заголовок с «Учебные задачи» на «План учебных задач» в `Index.cshtml`. На вкладке Actions он появился автоматически, а в сводке указаны событие `push` и соответствующий коммит. [Правка заголовка](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/commit/0a6af56cfd816d1f0ab7b6da67d2f3398e0dd64d) · [История запусков](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/actions/workflows/studyflow-ci.yml)
 
 Тесты проверяют ответ главной страницы `200` с русскоязычным HTML, наличие ссылки на документацию и ответ `404` для неизвестного маршрута. В обоих запусках прошли три теста из трёх.
 
