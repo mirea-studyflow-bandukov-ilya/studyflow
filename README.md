@@ -45,5 +45,7 @@
 - [2.1. Планирование, спринты и ёмкость](docs/practice-21.md).
 - [2.2. Kanban, мониторинг и процесс](docs/practice-22.md).
 - [3. Календарь и планы поставок двух команд](docs/practice-3.md).
+- [4.0. Локальный агент GitHub Actions](docs/practice-40.md).
+- [4.1. Непрерывная интеграция ASP.NET Core](docs/practice-41.md).
 - [Опубликованная документация StudyFlow](https://mirea-studyflow-bandukov-ilya.github.io/Docs/).
 - [Исходники документации в Docs](https://github.com/mirea-studyflow-bandukov-ilya/Docs).
