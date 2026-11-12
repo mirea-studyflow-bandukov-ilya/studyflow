@@ -1,0 +1,94 @@
+name: StudyFlow web CI (practice 4.1)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/StudyFlow.Web/**'
+      - 'tests/StudyFlow.Web.Tests/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/StudyFlow.Web/**'
+      - 'tests/StudyFlow.Web.Tests/**'
+
+permissions:
+  contents: read
+
+env:
+  BUILD_CONFIGURATION: Release
+  WEB_PROJECT: src/StudyFlow.Web/StudyFlow.Web.csproj
+  TEST_PROJECT: tests/StudyFlow.Web.Tests/StudyFlow.Web.Tests.csproj
+
+jobs:
+  build-and-test:
+    name: Build and test ASP.NET Core
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Get source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Install .NET 8 SDK
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore NuGet dependencies
+        run: dotnet restore "$TEST_PROJECT"
+
+      - name: Build web and test projects
+        run: dotnet build "$TEST_PROJECT" --configuration "$BUILD_CONFIGURATION" --no-restore
+
+      - name: Run integration tests
+        id: tests
+        run: |
+          dotnet test "$TEST_PROJECT" --configuration "$BUILD_CONFIGURATION" --no-build \
+            --logger 'console;verbosity=normal' --logger 'trx;LogFileName=studyflow.trx' \
+            --results-directory artifacts/tests
+
+      - name: Write test summary
+        if: ${{ !cancelled() && (steps.tests.outcome == 'success' || steps.tests.outcome == 'failure') }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          import xml.etree.ElementTree as ET
+
+          report = ET.parse(Path('artifacts/tests/studyflow.trx'))
+          counters = report.find('.//{*}Counters').attrib
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as summary:
+              print('## StudyFlow integration tests', file=summary)
+              print(f"\nTrigger: `{os.environ['GITHUB_EVENT_NAME']}`  ", file=summary)
+              print(f"Commit: `{os.environ['GITHUB_SHA']}`\n", file=summary)
+              print(f"Passed: **{counters['passed']}** · Failed: **{counters['failed']}**\n", file=summary)
+              print('| Test | Result |\n| --- | --- |', file=summary)
+              for result in report.findall('.//{*}UnitTestResult'):
+                  name = result.attrib['testName'].rsplit('.', 1)[-1]
+                  print(f"| `{name}` | {result.attrib['outcome']} |", file=summary)
+          PY
+
+      - name: Upload TRX test results
+        if: ${{ !cancelled() && (steps.tests.outcome == 'success' || steps.tests.outcome == 'failure') }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: studyflow-test-results
+          path: artifacts/tests/studyflow.trx
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish web application
+        run: |
+          dotnet publish "$WEB_PROJECT" --configuration "$BUILD_CONFIGURATION" --no-build \
+            --output artifacts/web
+
+      - name: Upload web build
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: studyflow-web
+          path: artifacts/web/
+          if-no-files-found: error
+          retention-days: 14
