@@ -1,11 +1,11 @@
-name: Prepare demo data (practice 2.0)
-run-name: Parts Unlimited — ${{ inputs.mode }}
+name: Подготовка учебных данных · практика 2.0
+run-name: Parts Unlimited · ${{ inputs.mode == 'apply' && 'импорт' || 'проверка' }}
 
 on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Preview template or import missing demo data
+        description: Проверить шаблон или добавить недостающие учебные карточки
         type: choice
         options:
           - dry-run
@@ -22,6 +22,7 @@ concurrency:
 
 jobs:
   prepare:
+    name: Проверить генератор учебных данных
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -29,16 +30,16 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 8.0.x
-      - name: Build and publish generator with template
+      - name: Собрать генератор с шаблоном и переводом
         run: dotnet publish tools/DemoGenerator/DemoGenerator.csproj -c Release -r linux-x64 --self-contained true -o artifacts/demo-generator
-      - name: Validate the template
+      - name: Проверить шаблон и перевод
         run: ./artifacts/demo-generator/DemoGenerator --dry-run
-      - name: Import and verify demo data
+      - name: Импортировать и проверить учебные данные
         if: inputs.mode == 'apply'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: ./artifacts/demo-generator/DemoGenerator --apply
-      - name: Save executable, template and import mapping
+      - name: Сохранить сборку, шаблон, перевод и соответствия карточек
         if: always()
         uses: actions/upload-artifact@v7
         with:
