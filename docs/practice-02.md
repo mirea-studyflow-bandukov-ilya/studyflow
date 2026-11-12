@@ -13,7 +13,7 @@
 - [Wiki проекта](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/wiki).
 - [Репозиторий Docs](https://github.com/mirea-studyflow-bandukov-ilya/Docs).
 - [Опубликованная документация](https://mirea-studyflow-bandukov-ilya.github.io/Docs/).
-- [Our team](https://mirea-studyflow-bandukov-ilya.github.io/Docs/our-team/).
+- [Наша команда](https://mirea-studyflow-bandukov-ilya.github.io/Docs/our-team/).
 - [Январские события](https://mirea-studyflow-bandukov-ilya.github.io/Docs/events/january/).
 - [Февральские события](https://mirea-studyflow-bandukov-ilya.github.io/Docs/events/february/).
 - [Сравнение версий окружения](https://github.com/mirea-studyflow-bandukov-ilya/studyflow/wiki/%D0%9E%D0%BA%D1%80%D1%83%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B4%D0%BB%D1%8F-%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B8-%D1%81%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D1%8B/_compare/7cbd893e3fe86a5c6ada187b4178fc1b1b5452c5...305115a363a9ec33a9d8e2cf20bb5b80ab5dd998).
@@ -41,7 +41,7 @@
 
 Создан отдельный публичный репозиторий Docs с README. Файл README.md переименован в Our-team.md отдельным коммитом, затем наполнен описанием участника и порядка работы. Доступны Markdown-таблица, нумерованный список, выделение, ссылки и блок команды Git.
 
-GitHub Pages публикует корень ветки main. Страницы Markdown обрабатываются Jekyll. Отдельно проверено, что Our-team.md отображается как страница сайта Our team.
+GitHub Pages публикует корень ветки main. Страницы Markdown обрабатываются Jekyll. Отдельно проверено, что Our-team.md отображается как страница сайта «Наша команда».
 
 Название опубликованного раздела — «Документация». Исходные файлы, изменения и версии остаются в Docs. Новые коммиты в выбранной ветке запускают обновление Pages. Выбор другой ветки в настройках позволяет сменить публикуемую версию; одновременно в этой работе используется main.
 
@@ -81,7 +81,7 @@ GitHub Pages — согласованная функциональная зам�
 
 ## Подтверждения
 
-Сохранены снимки первоначальной иерархии, фильтра страниц, сравнения редакций, поиска Azure, прав Wiki, источника Pages, страницы Our team, исходного алфавитного порядка и финального порядка. Снимки находятся в локальной папке результатов практики 1.2.
+Сохранены снимки первоначальной иерархии, фильтра страниц, сравнения редакций, поиска Azure, прав Wiki, источника Pages, страницы команды, исходного алфавитного порядка и финального порядка. Снимки находятся в локальной папке результатов практики 1.2.
 
 ## Источники
 
